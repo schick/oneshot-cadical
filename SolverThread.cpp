@@ -38,7 +38,7 @@ void SolverThread::solve() {
 
         if (result == 0) {
             currentLeaf->iterations++;
-            if (currentLeaf->iterations.load() > 4) {
+            if (currentLeaf->iterations.load() > 2 * currentLeaf->getDepth()) {
                 int next = solver.next();
                 int nextLit = next + 1;
                 tree.extend(currentLeaf, nextLit);

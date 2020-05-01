@@ -22,4 +22,16 @@ void Node::extend(int newLit) {
     isLeaf = false;
 }
 
+int Node::getLit() {
+    return lit;
+}
+
+int Node::getDepth() {
+    return depth;
+}
+
+Node *Node::getParent() {
+    return parent;
+}
+
 

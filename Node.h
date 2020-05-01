@@ -17,15 +17,11 @@ class Node {
 
 public:
 
-    Node(Node *parent, int lit) : parent{parent}, lit{lit} {};
+    Node(Node *parent, int lit) : parent{parent}, lit{lit}, depth{parent->depth + 1} {};
 
-    int getLit() const {
-        return lit;
-    }
-
-    Node *getParent() const {
-        return parent;
-    }
+    int getLit();
+    int getDepth();
+    Node *getParent();
 
     std::atomic<int> iterations{0};
 
@@ -33,7 +29,9 @@ private:
 
     Node() = default;
 
-    int lit = 0;
+    const int lit = 0;
+    const int depth = 1;
+
     Node *parent = nullptr;
     Node *neighbour = nullptr;
 
