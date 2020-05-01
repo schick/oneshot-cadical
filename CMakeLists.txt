@@ -3,7 +3,7 @@ project(oneshot_cadical)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(oneshot_cadical main.cpp Tree.cpp Tree.h)
+add_executable(oneshot_cadical main.cpp Node.cpp Node.h Tree.cpp Tree.h SolverThread.cpp SolverThread.h)
 
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
