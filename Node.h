@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <atomic>
+#include <iostream>
 
 class Tree;
 
@@ -22,6 +23,8 @@ public:
     int getLit();
     int getDepth();
     Node *getParent();
+
+    void log(std::ostream &logFile);
 
     std::atomic<int> iterations{0};
 

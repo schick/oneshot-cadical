@@ -23,9 +23,9 @@ void SolverThread::solve() {
         //Get next leaf
         currentLeaf = tree.getNextLeaf(currentLeaf);
 
-        // If root was pruned
+        // Root was pruned
         if (currentLeaf == nullptr) {
-            return;
+            shouldTerminate.store(true);
         }
 
         // Assume literals depending on leaf

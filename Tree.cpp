@@ -4,6 +4,7 @@
 
 #include <cassert>
 #include "Tree.h"
+#include <iostream>
 
 Node *Tree::getNextLeaf(Node *prevNode) {
     const std::lock_guard<std::mutex> lock(mutex);
@@ -52,4 +53,13 @@ void Tree::prune(Node *node) {
     if (!node->wasPruned) {
         node->prune();
     }
+}
+
+void Tree::log(std::ostream &logFile) {
+    const std::lock_guard<std::mutex> lock(mutex);
+    logFile << "digraph G {\n";
+    logFile << "node [shape=record];\n";
+    logFile << "legend [ label=\"Literal | SolverCount | Iterations | isLeaf | wasPruned | Depth\"];\n";
+    dummyRoot.log(logFile);
+    logFile << "}\n";
 }

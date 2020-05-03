@@ -1,4 +1,5 @@
 
+#include <fstream>
 #include "Tree.h"
 #include "SolverThread.h"
 
@@ -15,6 +16,16 @@ int main() {
 
     for (auto &solverThread : solverThreads) {
         solverThread.start();
+    }
+
+    int counter = 0;
+    while (!SolverThread::shouldTerminate.load()) {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+        std::ofstream logFile;
+        logFile.open(std::to_string(counter++) + "log.gv");
+        tree.log(logFile);
+        logFile.close();
+        printf("Wrote log\n");
     }
 
     for (auto &solverThread : solverThreads) {

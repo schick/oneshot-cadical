@@ -34,4 +34,14 @@ Node *Node::getParent() {
     return parent;
 }
 
+void Node::log(std::ostream &logFile) {
+    logFile << lit  << " [label=\"" << lit << "|" << solverCounter << "|" << iterations << "|" << isLeaf << "|" << wasPruned << "|" << depth << "\" ];\n";
+    if (!isLeaf) {
+        logFile << lit << " -> " << left->lit << "\n";
+        left->log(logFile);
+        logFile << lit << " -> " << right->lit << "\n";
+        right->log(logFile);
+    }
+}
+
 

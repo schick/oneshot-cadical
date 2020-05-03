@@ -23,6 +23,8 @@ public:
 
     void prune(Node *node);
 
+    void log(std::ostream &logFile);
+
 private:
     std::mutex mutex;
 };

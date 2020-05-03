@@ -21,16 +21,16 @@ public:
 
     std::thread thread;
 
+    static std::atomic<bool> shouldTerminate;
+
 private:
 
     void solve();
-
     const char *path;
+
     int nVars = 0;
 
     static inline void assume(CaDiCaL::Solver &solver, Node *node);
-
-    static std::atomic<bool> shouldTerminate;
 
     Tree &tree;
     Node *currentLeaf = nullptr;
