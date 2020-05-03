@@ -26,6 +26,7 @@ void SolverThread::solve() {
         // Root was pruned
         if (currentLeaf == nullptr) {
             shouldTerminate.store(true);
+            return;
         }
 
         // Assume literals depending on leaf
@@ -46,6 +47,7 @@ void SolverThread::solve() {
 
         } else if (result == 10) {
             shouldTerminate.store(true);
+            return;
 
         } else if (result == 20) {
             tree.prune(currentLeaf);
