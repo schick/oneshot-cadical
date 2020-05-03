@@ -16,6 +16,7 @@ Node *Tree::getNextLeaf(Node *prevNode) {
     // Reset solverCounter
     while (prevNode->getLit() != 0) {
         prevNode->solverCounter--;
+        assert(prevNode->solverCounter >= 0);
         prevNode = prevNode->parent;
     }
 
@@ -36,6 +37,7 @@ Node *Tree::getNextLeaf(Node *prevNode) {
             auto rightSolverCount = nextNode->right->solverCounter;
 
             nextNode = leftSolverCount <= rightSolverCount ? nextNode->left.get() : nextNode->right.get();
+            nextNode->solverCounter++;
         }
     }
     return nextNode;
