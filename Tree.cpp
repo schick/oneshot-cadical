@@ -28,6 +28,8 @@ Node *Tree::getNextLeaf(Node *prevNode) {
         // Child nodes exist because nextNode is not a leaf
         assert(!(nextNode->left->wasPruned && nextNode->right->wasPruned));
 
+        //TODO: Needs to also regard depth. Otherwise at depth = #threads only the left child will expand
+
         if (nextNode->left->wasPruned) {
             nextNode = nextNode->right.get();
         } else if (nextNode->right->wasPruned) {
