@@ -37,10 +37,10 @@ Node *Tree::getNextLeaf(Node *prevNode) {
         } else {
             auto leftSolverCount = nextNode->left->solverCounter;
             auto rightSolverCount = nextNode->right->solverCounter;
-
             nextNode = leftSolverCount <= rightSolverCount ? nextNode->left.get() : nextNode->right.get();
-            nextNode->solverCounter++;
         }
+        // Increment solverCounter of chosen node
+        nextNode->solverCounter++;
     }
     return nextNode;
 }
