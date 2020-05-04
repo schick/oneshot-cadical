@@ -17,6 +17,8 @@ public:
 
     SolverThread(const char *path, Tree &tree);
 
+    ~SolverThread();
+
     void start();
 
     std::thread thread;
@@ -25,6 +27,8 @@ public:
 
 private:
 
+    CaDiCaL::Solver *solver = new CaDiCaL::Solver();
+
     void solve();
     const char *path;
 
@@ -32,7 +36,7 @@ private:
 
     inline void getNextLeaf();
 
-    static inline void assume(CaDiCaL::Solver &solver, Node *node);
+    static inline void assume(CaDiCaL::Solver *solver, Node *node);
 
     Tree &tree;
     Node *currentLeaf = nullptr;

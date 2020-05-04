@@ -16,8 +16,7 @@ void SolverThread::start() {
 void SolverThread::solve() {
     currentLeaf = &tree.dummyRoot;
 
-    auto solver = CaDiCaL::Solver{};
-    solver.read_dimacs(path, nVars, 0);
+    solver->read_dimacs(path, nVars, 0);
 
     while (!shouldTerminate.load()) {
         // Root was pruned
@@ -29,15 +28,15 @@ void SolverThread::solve() {
         // Assume literals depending on leaf
         assume(solver, currentLeaf);
 
-        solver.limit("conflicts", 10000);
-        int result = solver.solve();
+        solver->limit("conflicts", 10000);
+        int result = solver->solve();
 
         printf("Result: %d\n", result);
 
         if (result == 0) {
             currentLeaf->iterations++;
             if (currentLeaf->iterations.load() > 2 * currentLeaf->getDepth()) {
-                int next = solver.next();
+                int next = solver->next();
                 int nextLit = next + 1;
                 tree.extend(currentLeaf, nextLit);
                 getNextLeaf();
@@ -54,13 +53,17 @@ void SolverThread::solve() {
     }
 }
 
-void SolverThread::assume(CaDiCaL::Solver &solver, Node *node) {
+void SolverThread::assume(CaDiCaL::Solver *solver, Node *node) {
     while (node->getLit() != 0) {
-        solver.assume(node->getLit());
+        solver->assume(node->getLit());
         node = node->getParent();
     }
 }
 
 void SolverThread::getNextLeaf() {
     currentLeaf = tree.getNextLeaf(currentLeaf);
+}
+
+SolverThread::~SolverThread() {
+    delete solver;
 }
