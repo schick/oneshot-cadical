@@ -43,6 +43,7 @@ private:
     std::unique_ptr<Node> right = nullptr;
 
     int solverCounter = 0;
+    int visits = 0;
 
     bool isLeaf = true;
     void extend(int newLit);
