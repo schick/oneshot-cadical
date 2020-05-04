@@ -30,6 +30,8 @@ private:
 
     int nVars = 0;
 
+    inline void getNextLeaf();
+
     static inline void assume(CaDiCaL::Solver &solver, Node *node);
 
     Tree &tree;

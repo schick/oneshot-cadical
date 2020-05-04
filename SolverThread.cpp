@@ -20,9 +20,6 @@ void SolverThread::solve() {
     solver.read_dimacs(path, nVars, 0);
 
     while (!shouldTerminate.load()) {
-        //Get next leaf
-        currentLeaf = tree.getNextLeaf(currentLeaf);
-
         // Root was pruned
         if (currentLeaf == nullptr) {
             shouldTerminate.store(true);
@@ -43,6 +40,7 @@ void SolverThread::solve() {
                 int next = solver.next();
                 int nextLit = next + 1;
                 tree.extend(currentLeaf, nextLit);
+                getNextLeaf();
             }
 
         } else if (result == 10) {
@@ -51,7 +49,7 @@ void SolverThread::solve() {
 
         } else if (result == 20) {
             tree.prune(currentLeaf);
-
+            getNextLeaf();
         }
     }
 }
@@ -61,4 +59,8 @@ void SolverThread::assume(CaDiCaL::Solver &solver, Node *node) {
         solver.assume(node->getLit());
         node = node->getParent();
     }
+}
+
+void SolverThread::getNextLeaf() {
+    currentLeaf = tree.getNextLeaf(currentLeaf);
 }
