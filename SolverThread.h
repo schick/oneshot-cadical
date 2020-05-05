@@ -15,9 +15,7 @@ class SolverThread {
 
 public:
 
-    SolverThread(const char *path, Tree &tree);
-
-    ~SolverThread();
+    explicit SolverThread(Tree &tree);
 
     void start();
 
@@ -25,18 +23,17 @@ public:
 
     static std::atomic<bool> shouldTerminate;
 
-private:
+    void read(const char *path);
+    void assume(Node *node);
+    int solveLimited(int conflits);
 
-    CaDiCaL::Solver *solver = new CaDiCaL::Solver();
+private:
+    CaDiCaL::Solver solver = CaDiCaL::Solver();
 
     void solve();
-    const char *path;
 
     int nVars = 0;
-
-    inline void getNextLeaf();
-
-    static inline void assume(CaDiCaL::Solver *solver, Node *node);
+    void getNextLeaf();
 
     Tree &tree;
     Node *currentLeaf = nullptr;

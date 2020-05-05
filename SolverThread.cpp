@@ -5,7 +5,7 @@
 #include "SolverThread.h"
 #include "cadical.hpp"
 
-SolverThread::SolverThread(const char *path, Tree &tree) : tree{tree}, path{path} {};
+SolverThread::SolverThread(Tree &tree) : tree{tree} {};
 
 std::atomic<bool> SolverThread::shouldTerminate{false};
 
@@ -16,8 +16,6 @@ void SolverThread::start() {
 void SolverThread::solve() {
     currentLeaf = &tree.dummyRoot;
 
-    solver->read_dimacs(path, nVars, 0);
-
     while (!shouldTerminate.load()) {
         // Root was pruned
         if (currentLeaf == nullptr) {
@@ -26,17 +24,17 @@ void SolverThread::solve() {
         }
 
         // Assume literals depending on leaf
-        assume(solver, currentLeaf);
+        assume(currentLeaf);
 
-        solver->limit("conflicts", 10000);
-        int result = solver->solve();
+        // Try solving
+        int result = solveLimited(10000);
 
         printf("Result: %d\n", result);
 
         if (result == 0) {
             currentLeaf->iterations++;
             if (currentLeaf->iterations.load() > 2 * currentLeaf->getDepth()) {
-                int next = solver->next();
+                int next = solver.next();
                 int nextLit = next + 1;
                 tree.extend(currentLeaf, nextLit);
                 getNextLeaf();
@@ -53,17 +51,23 @@ void SolverThread::solve() {
     }
 }
 
-void SolverThread::assume(CaDiCaL::Solver *solver, Node *node) {
-    while (node->getLit() != 0) {
-        solver->assume(node->getLit());
-        node = node->getParent();
-    }
-}
-
 void SolverThread::getNextLeaf() {
     currentLeaf = tree.getNextLeaf(currentLeaf);
 }
 
-SolverThread::~SolverThread() {
-    delete solver;
+void SolverThread::read(const char *path) {
+    solver.read_dimacs(path, nVars, 0);
 }
+
+void SolverThread::assume(Node *node) {
+    while (node->getLit() != 0) {
+        solver.assume(node->getLit());
+        node = node->getParent();
+    }
+}
+
+int SolverThread::solveLimited(int conflits) {
+    solver.limit("conflicts", conflits);
+    return solver.solve();
+}
+

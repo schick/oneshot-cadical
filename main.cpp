@@ -3,7 +3,7 @@
 #include "Tree.h"
 #include "SolverThread.h"
 
-std::vector<SolverThread> solverThreads;
+std::vector<std::unique_ptr<SolverThread>> solverThreads;
 Tree tree;
 
 void log(const std::string& filename) {
@@ -14,14 +14,16 @@ void log(const std::string& filename) {
 }
 
 int main() {
-    const char *path = "/home/maxi/gates/ecarev-110-1031-23-40-3.cnf";
+    const char *PATH = "/home/maxi/gates/ecarev-110-1031-23-40-3.cnf";
+    const size_t THREAD_COUNT = 2;
 
-    for (int i = 0; i < 2; i++) {
-        solverThreads.emplace_back(path, tree);
+    for (int i = 0; i < THREAD_COUNT; i++) {
+        solverThreads.emplace_back(new SolverThread(tree));
     }
 
     for (auto &solverThread : solverThreads) {
-        solverThread.start();
+        solverThread->read(PATH);
+        solverThread->start();
     }
 
     int counter = 0;
@@ -35,7 +37,7 @@ int main() {
     printf("Wrote result\n");
 
     for (auto &solverThread : solverThreads) {
-        solverThread.thread.join();
+        solverThread->thread.join();
     }
 
     return 0;

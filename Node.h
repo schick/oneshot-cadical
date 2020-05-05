@@ -20,8 +20,10 @@ public:
 
     Node(Node *parent, int lit) : parent{parent}, lit{lit}, depth{parent->depth + 1} {};
 
+    Node() = default;
     int getLit();
     int getDepth();
+
     Node *getParent();
 
     void log(std::ostream &logFile);
@@ -29,8 +31,6 @@ public:
     std::atomic<int> iterations{0};
 
 private:
-
-    Node() = default;
 
     const int lit = 0;
     const int depth = 1;
