@@ -23,6 +23,7 @@ public:
     Node() = default;
     int getLit();
     int getDepth();
+    int getId();
 
     Node *getParent();
 
@@ -30,7 +31,11 @@ public:
 
     std::atomic<int> iterations{0};
 
+protected:
+    static std::atomic<int> s_id;
+
 private:
+    int id{++s_id};
 
     const int lit = 0;
     const int depth = 1;

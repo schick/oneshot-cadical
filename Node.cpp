@@ -30,16 +30,22 @@ int Node::getDepth() {
     return depth;
 }
 
+std::atomic<int> Node::s_id(0);
+
 Node *Node::getParent() {
     return parent;
 }
 
+int Node::getId() {
+    return id;
+}
+
 void Node::log(std::ostream &logFile) {
-    logFile << lit  << " [label=\"" << lit << "|" << solverCounter << "|" << visits << "|" << iterations << "|" << isLeaf << "|" << wasPruned << "|" << depth << "\" ];\n";
+    logFile << getId()  << " [label=\"" << lit << "|" << solverCounter << "|" << visits << "|" << iterations << "|" << isLeaf << "|" << wasPruned << "|" << depth << "\" ];\n";
     if (!isLeaf) {
-        logFile << lit << " -> " << left->lit << "\n";
+        logFile << getId() << " -> " << left->getId() << "\n";
         left->log(logFile);
-        logFile << lit << " -> " << right->lit << "\n";
+        logFile << getId() << " -> " << right->getId() << "\n";
         right->log(logFile);
     }
 }
