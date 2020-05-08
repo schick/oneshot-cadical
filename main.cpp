@@ -13,8 +13,12 @@ void log(const std::string& filename) {
     logFile.close();
 }
 
-int main() {
-    const char *PATH = "/home/maxi/gates/ecarev-110-1031-23-40-3.cnf";
+int main(int argc, char *argv[]) {
+    if (argc != 2) {
+        printf("Missing input file\n");
+        return 1;
+    }
+    const char *PATH = argv[1];
     const size_t THREAD_COUNT = 2;
 
     for (int i = 0; i < THREAD_COUNT; i++) {
