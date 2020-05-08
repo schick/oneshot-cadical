@@ -41,7 +41,12 @@ int Node::getId() {
 }
 
 void Node::log(std::ostream &logFile) {
-    logFile << getId()  << " [label=\"" << lit << "|" << solverCounter << "|" << visits << "|" << iterations << "|" << isLeaf << "|" << wasPruned << "|" << depth << "\" ];\n";
+    std::string color = "color=\"red\"";
+    if (!wasPruned && isLeaf) {
+        color = "color=\"green\"";
+    }
+
+    logFile << getId()  << " [label=\"" << lit << "|" << solverCounter << "|" << visits << "|" << iterations << "|" << isLeaf << "|" << wasPruned << "|" << depth << "\", " << color << "];\n";
     if (!isLeaf) {
         logFile << getId() << " -> " << left->getId() << "\n";
         left->log(logFile);
