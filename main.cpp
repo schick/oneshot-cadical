@@ -19,7 +19,8 @@ int main(int argc, char *argv[]) {
         return 1;
     }
     const char *PATH = argv[1];
-    const size_t THREAD_COUNT = 2;
+    const auto THREAD_COUNT = std::thread::hardware_concurrency();
+    printf("Using %d Threads\n", THREAD_COUNT);
 
     for (int i = 0; i < THREAD_COUNT; i++) {
         solverThreads.emplace_back(new SolverThread(tree));
