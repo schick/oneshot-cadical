@@ -31,6 +31,7 @@ int main(int argc, char *argv[]) {
         solverThread->start();
     }
 
+#ifdef LOG
     int counter = 0;
     while (!SolverThread::shouldTerminate.load()) {
         std::this_thread::sleep_for(std::chrono::milliseconds(5000));
@@ -40,6 +41,8 @@ int main(int argc, char *argv[]) {
 
     log("result.gv");
     printf("Wrote result\n");
+
+#endif
 
     for (auto &solverThread : solverThreads) {
         solverThread->thread.join();
