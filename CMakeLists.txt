@@ -6,6 +6,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
+if (DEBUG)
+    add_compile_definitions(DEBUG)
+endif(DEBUG)
+
 if (BUILD_TESTS)
     ## HACK TO REMOVE TARGETS
     set_property(GLOBAL PROPERTY CTEST_TARGETS_ADDED 1)
