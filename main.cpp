@@ -13,6 +13,16 @@ void log(const std::string& filename) {
     logFile.close();
 }
 
+struct counting_iterator {
+    size_t count;
+    counting_iterator& operator++() { ++count; return *this; }
+
+    struct black_hole { void operator=(Clause) {} };
+    black_hole operator*() { return black_hole(); }
+
+    // other iterator stuff may be needed
+};
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Missing input file\n");
@@ -43,10 +53,25 @@ int main(int argc, char *argv[]) {
     printf("Wrote result\n");
 
 #endif
+    std::this_thread::sleep_for(std::chrono::milliseconds(300000));
+    SolverThread::shouldTerminate.store(true);
 
     for (auto &solverThread : solverThreads) {
         solverThread->thread.join();
     }
+
+    for (size_t i = 0; i < solverThreads.size(); i++) {
+        auto learnt1 = solverThreads.at(i)->learntClauses;
+        printf("For Solver with id: %zu\n", i);
+        for (size_t j = i + 1; j < solverThreads.size(); j++) {
+            auto learnt2 = solverThreads.at(j)->learntClauses;
+            size_t count = set_intersection(
+                    learnt1.begin(), learnt1.end(), learnt2.begin(), learnt2.end(), counting_iterator()).count;
+            double interceptage = 1 - (double) count / learnt1.size();
+            printf("Interceptage with Solver %zu: %f\n", j, interceptage);
+        }
+    }
+
 
     return 0;
 }

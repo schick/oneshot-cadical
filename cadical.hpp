@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <vector>
+#include <functional>
 
 namespace CaDiCaL {
 
@@ -223,6 +224,10 @@ public:
   void add (int lit);
 
   int next();
+
+  void add_learned_unit_lit_callback(std::function<void(int)> learned_unit_lit_callback);
+
+  void add_learned_clause_callback(std::function<void(std::vector<int>&, int)> learned_clause_callback);
 
   // Assume valid non zero literal for next call to 'solve'.
   //

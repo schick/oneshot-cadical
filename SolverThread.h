@@ -7,9 +7,12 @@
 
 
 #include "Tree.h"
+#include "Clause.h"
+
 #include "cadical.hpp"
 
 #include <thread>
+#include <set>
 
 class SolverThread {
 
@@ -27,17 +30,21 @@ public:
     void assume(Node *node);
     int solveLimited(int conflits);
 
+    std::set<Clause> learntClauses;
 private:
+
     CaDiCaL::Solver solver = CaDiCaL::Solver();
 
     void solve();
-
     int nVars = 0;
-    void getNextLeaf();
 
+    void getNextLeaf();
     Tree &tree;
+
     Node *currentLeaf = nullptr;
 
+    void learn_unit(int lit);
+    void learn_clause(std::vector<int> &clause, int glue);
 };
 
 
