@@ -50,6 +50,7 @@ Node *Tree::getNextLeaf(Node *prevNode) {
 void Tree::extend(Node *node, int lit) {
     const std::lock_guard<std::mutex> lock(mutex);
     if (node->isLeaf) {
+        printf("EXTENDING TREE Depth: %d\n", node->depth);
         node->extend(lit);
     }
 }

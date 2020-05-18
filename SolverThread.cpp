@@ -33,6 +33,7 @@ void SolverThread::solve() {
     while (!shouldTerminate.load()) {
         // Root was pruned
         if (currentLeaf == nullptr) {
+            printf("UNSATISFIABLE\n");
             shouldTerminate.store(true);
             return;
         }
@@ -43,7 +44,6 @@ void SolverThread::solve() {
         // Try solving
         int result = solveLimited(limit);
 
-        printf("Result: %d\n", result);
 
         if (result == 0) {
             currentLeaf->iterations++;
@@ -55,10 +55,12 @@ void SolverThread::solve() {
             }
 
         } else if (result == 10) {
+            printf("SATISFIABLE\n");
             shouldTerminate.store(true);
             return;
 
         } else if (result == 20) {
+            printf("NODE PRUNED\n");
             tree.prune(currentLeaf);
             getNextLeaf();
         }
