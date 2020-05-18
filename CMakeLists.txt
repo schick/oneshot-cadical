@@ -20,6 +20,6 @@ if (BUILD_TESTS)
     add_subdirectory(tests)
 endif (BUILD_TESTS)
 
-add_executable(oneshot_cadical main.cpp Node.cpp Node.h Tree.cpp Tree.h SolverThread.cpp SolverThread.h)
+add_executable(oneshot_cadical main.cpp Node.cpp Node.h Tree.cpp Tree.h SolverThread.cpp SolverThread.h params.h params.cpp)
 
 target_link_libraries(oneshot_cadical ${CMAKE_CURRENT_SOURCE_DIR}/libcadical.a Threads::Threads)

@@ -10,12 +10,12 @@
 #include "cadical.hpp"
 
 #include <thread>
+#include <functional>
 
 class SolverThread {
 
 public:
-
-    explicit SolverThread(Tree &tree);
+    SolverThread(Tree &tree, bool random, const std::string& extStrat, int limit);
 
     void start();
 
@@ -25,19 +25,21 @@ public:
 
     void read(const char *path);
     void assume(Node *node);
-    int solveLimited(int conflits);
+    int solveLimited(int conflicts);
 
 private:
     CaDiCaL::Solver solver = CaDiCaL::Solver();
 
     void solve();
+    std::function<int(int)> calcThreshhold;
+
+    int limit;
 
     int nVars = 0;
     void getNextLeaf();
 
     Tree &tree;
     Node *currentLeaf = nullptr;
-
 };
 
 

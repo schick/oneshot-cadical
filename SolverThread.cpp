@@ -4,8 +4,22 @@
 
 #include "SolverThread.h"
 #include "cadical.hpp"
+#include <cmath>
+#include <stdexcept>
 
-SolverThread::SolverThread(Tree &tree) : tree{tree} {};
+SolverThread::SolverThread(Tree &tree, bool random, const std::string& extStrat, int limit) : tree{tree}, limit{limit} {
+    if (random)
+        solver.set("seed", std::rand());
+
+    if (extStrat == "lin")
+        calcThreshhold = [](int depth) { return depth; };
+    else if (extStrat == "quad")
+        calcThreshhold = [](int depth){return std::pow(depth, 2);};
+    else if (extStrat == "expo")
+        calcThreshhold = [](int depth){return std::pow(2, depth);};
+    else
+        throw std::invalid_argument("Unknown option for extension strategy.");
+}
 
 std::atomic<bool> SolverThread::shouldTerminate{false};
 
@@ -27,13 +41,13 @@ void SolverThread::solve() {
         assume(currentLeaf);
 
         // Try solving
-        int result = solveLimited(10000);
+        int result = solveLimited(limit);
 
         printf("Result: %d\n", result);
 
         if (result == 0) {
             currentLeaf->iterations++;
-            if (currentLeaf->iterations.load() > 2 * currentLeaf->getDepth()) {
+            if (currentLeaf->iterations.load() > calcThreshhold(currentLeaf->getDepth())) {
                 int next = solver.next();
                 int nextLit = next + 1;
                 tree.extend(currentLeaf, nextLit);
@@ -70,4 +84,6 @@ int SolverThread::solveLimited(int conflits) {
     solver.limit("conflicts", conflits);
     return solver.solve();
 }
+
+
 

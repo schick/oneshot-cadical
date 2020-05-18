@@ -1,12 +1,13 @@
 
 #include <fstream>
+#include "params.h"
 #include "Tree.h"
 #include "SolverThread.h"
 
 std::vector<std::unique_ptr<SolverThread>> solverThreads;
 Tree tree;
 
-void log(const std::string& filename) {
+void log(const std::string &filename) {
     std::ofstream logFile;
     logFile.open(filename);
     tree.log(logFile);
@@ -14,20 +15,22 @@ void log(const std::string& filename) {
 }
 
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        printf("Missing input file\n");
-        return 1;
+    Parameters params;
+    params.init(argc, argv);
+    if (params.isSet("h") || params.isSet("help") || params.getFilename().empty()) {
+        params.printUsage();
+        return 0;
+    } else {
+        params.printParams();
     }
-    const char *PATH = argv[1];
-    const auto THREAD_COUNT = std::thread::hardware_concurrency();
-    printf("Using %d Threads\n", THREAD_COUNT);
 
-    for (int i = 0; i < THREAD_COUNT; i++) {
-        solverThreads.emplace_back(new SolverThread(tree));
+    for (int i = 0; i < params.getIntParam("threads"); i++) {
+        solverThreads.emplace_back(
+                new SolverThread(tree, params.isSet("random"), params.getParam("ext"), params.getIntParam("limit")));
     }
 
     for (auto &solverThread : solverThreads) {
-        solverThread->read(PATH);
+        solverThread->read(params.getFilename().c_str());
         solverThread->start();
     }
 
