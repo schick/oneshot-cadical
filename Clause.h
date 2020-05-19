@@ -13,14 +13,12 @@
 class Clause {
 
 public:
-    Clause() = default;
-
-    explicit Clause(std::vector<int> &literals) : lits{literals} {
+    explicit Clause(std::vector<int> &literals, int glue) : lits{literals}, glue{glue} {
         assert(!lits.empty());
         std::sort(lits.begin(), lits.end());
     }
 
-    explicit Clause(int unit_lit) : lits{unit_lit} {
+    explicit Clause(int unit_lit) : lits{unit_lit}, glue{0} {
         assert(!lits.empty());
     }
 
@@ -30,14 +28,14 @@ public:
                 if (lits.at(i) != right.lits.at(i))
                     return lits.at(i) < right.lits.at(i);
             // Identical clause
-            return false;
+            return glue < right.glue;
         }
         return lits.size() < right.lits.size();
     }
 
 private:
     std::vector<int> lits;
-
+    int glue;
 };
 
 

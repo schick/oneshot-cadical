@@ -17,7 +17,7 @@ void SolverThread::learn_unit(int lit) {
 }
 
 void SolverThread::learn_clause(std::vector<int> &clause, int glue) {
-    learntClauses.emplace(clause);
+    learntClauses.emplace(clause, glue);
 }
 
 void SolverThread::solve() {
