@@ -45,10 +45,20 @@ void bar(std::vector <int> &clause, int glue) {
     }
 }
 
+struct ClauseChecker : CaDiCaL::ClauseIterator {
+    bool clause (const std::vector<int> & c) override {
+        printf("Clause: ");
+        for(int i : c)
+            printf("%d ", i);
+        printf("\n");
+        return true;
+    }
+};
+
 TEST_CASE("Unit Literal Callback") {
     CaDiCaL::Solver solver = CaDiCaL::Solver();
-    solver.add_learned_unit_lit_callback(&foo);
-    solver.add_learned_clause_callback(&bar);
+//    solver.add_learned_unit_lit_callback(&foo);
+//    solver.add_learned_clause_callback(&bar);
 
     const char *path = "/home/maxi/gates/vmpc_32.renamed-as.sat05-1919.cnf";
     int nVars;
@@ -58,8 +68,12 @@ TEST_CASE("Unit Literal Callback") {
     solver.assume(-565);
     solver.assume(105);
     solver.assume(783);
-//    solver.limit("conflicts", 100);
-    auto res = solver.solve();
+
+    ClauseChecker cc;
     printf("%ld\n", solver.redundant());
-    REQUIRE(res == 10);
+    solver.traverse_red_clauses(cc);
+    solver.limit("conflicts", 100);
+    solver.solve();
+    printf("%ld\n", solver.redundant());
+    solver.traverse_red_clauses(cc);
 }

@@ -23,6 +23,8 @@ struct counting_iterator {
     // other iterator stuff may be needed
 };
 
+
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Missing input file\n");
@@ -58,6 +60,10 @@ int main(int argc, char *argv[]) {
 
     for (auto &solverThread : solverThreads) {
         solverThread->thread.join();
+    }
+
+    for (auto &solverThread : solverThreads) {
+        solverThread->learn();
     }
 
     for (size_t i = 0; i < solverThreads.size(); i++) {

@@ -4,7 +4,7 @@
 
 #include "SolverThread.h"
 
-SolverThread::SolverThread(Tree &tree) : tree{tree} {};
+SolverThread::SolverThread(Tree &tree) : tree{tree}, clauseAdder{*this} {};
 
 std::atomic<bool> SolverThread::shouldTerminate{false};
 
@@ -23,11 +23,11 @@ void SolverThread::learn_clause(std::vector<int> &clause, int glue) {
 void SolverThread::solve() {
     currentLeaf = &tree.dummyRoot;
 
-    std::function<void(int)> learn_unit_callback = std::bind(&SolverThread::learn_unit, this, std::placeholders::_1);
-    solver.add_learned_unit_lit_callback(learn_unit_callback);
-
-    std::function<void(std::vector<int>&, int)> learn_clause_callback = std::bind(&SolverThread::learn_clause, this, std::placeholders::_1, std::placeholders::_2);
-    solver.add_learned_clause_callback(learn_clause_callback);
+//    std::function<void(int)> learn_unit_callback = std::bind(&SolverThread::learn_unit, this, std::placeholders::_1);
+//    solver.add_learned_unit_lit_callback(learn_unit_callback);
+//
+//    std::function<void(std::vector<int>&, int)> learn_clause_callback = std::bind(&SolverThread::learn_clause, this, std::placeholders::_1, std::placeholders::_2);
+//    solver.add_learned_clause_callback(learn_clause_callback);
 
     while (!shouldTerminate.load()) {
         // Root was pruned
@@ -41,9 +41,6 @@ void SolverThread::solve() {
 
         // Try solving
         int result = solveLimited(10000);
-
-        printf("Result: %d\n", result);
-        printf("Learned: %d\n", learntClauses.size());
 
         if (result == 0) {
             currentLeaf->iterations++;
@@ -82,6 +79,10 @@ void SolverThread::assume(Node *node) {
 int SolverThread::solveLimited(int conflits) {
     solver.limit("conflicts", conflits);
     return solver.solve();
+}
+
+void SolverThread::learn() {
+    solver.traverse_red_clauses(clauseAdder);
 }
 
 

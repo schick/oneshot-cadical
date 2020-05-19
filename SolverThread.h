@@ -31,9 +31,20 @@ public:
     int solveLimited(int conflits);
 
     std::set<Clause> learntClauses;
+    CaDiCaL::Solver solver = CaDiCaL::Solver();
+
+    void learn();
+
 private:
 
-    CaDiCaL::Solver solver = CaDiCaL::Solver();
+    struct ClauseAdder : CaDiCaL::ClauseIterator {
+        explicit ClauseAdder(SolverThread &solverThread) : _solverThread{solverThread}{};
+        SolverThread &_solverThread;
+        bool clause (const std::vector<int> & c) override {
+            _solverThread.learn_clause(const_cast<std::vector<int>&>(c), 0);
+            return true;
+        }
+    } clauseAdder;
 
     void solve();
     int nVars = 0;
